@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+        jdk 'jdk-17'
+    }
+
     environment {
         IMAGE_NAME = "hyeonjin5012/app"
         IMAGE_TAG  = "${BUILD_NUMBER}"
