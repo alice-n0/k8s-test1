@@ -16,6 +16,12 @@ build/
 # Gradle wrapper logs
 gradle-app.setting
 
+# ✅ Gradle Wrapper는 반드시 포함
+!gradlew
+!gradlew.bat
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+
 # Eclipse
 .classpath
 .project
