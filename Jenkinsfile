@@ -1,0 +1,65 @@
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_NAME = "hyeonjin5012/app"
+        IMAGE_TAG  = "${BUILD_NUMBER}"
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Gradle Build') {
+            steps {
+                sh '''
+                chmod +x gradlew
+                ./gradlew clean build
+                '''
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                sh '''
+                docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
+                docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:latest
+                '''
+            }
+        }
+
+        stage('Docker Login & Push') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'docker_password',
+                        usernameVariable: 'DOCKER_USER',
+                        passwordVariable: 'DOCKER_PASS'
+                    )
+                ]) {
+                    sh '''
+                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                    docker push ${IMAGE_NAME}:${IMAGE_TAG}
+                    docker push ${IMAGE_NAME}:latest
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            sh 'docker logout || true'
+        }
+        success {
+            echo '✅ Jenkins CI pipeline 성공'
+        }
+        failure {
+            echo '❌ Jenkins CI pipeline 실패'
+        }
+    }
+}
