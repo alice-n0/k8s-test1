@@ -8,7 +8,7 @@ pipeline {
     environment {
         JAVA_HOME = tool 'jdk-17'
         PATH = "${JAVA_HOME}/bin:${env.PATH}"
-        IMAGE_NAME = "hyeonjin5012/app"
+        IMAGE_NAME = "hyeonjin5012/k8s-test1"
         IMAGE_TAG  = "${BUILD_NUMBER}"
     }
 
