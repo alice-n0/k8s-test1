@@ -18,7 +18,7 @@ public class HelloController {
     }
 
   
-    @GetMapping("/store/check")
+    @GetMapping("/storage/check")
     public String checkStorage() {
         try {
             Path path = Path.of(STORAGE_PATH);
