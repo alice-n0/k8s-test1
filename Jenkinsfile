@@ -56,6 +56,14 @@ pipeline {
                 }
             }
         }
+        
+        stage('deploy k8s'){
+            steps{
+                kubectl apply -n dev -f k8s/deployment.yaml
+                kubectl apply -n dev -f k8s/service.yaml
+                kubectl rollout status deployment/k8s-test1 -n dev
+            }
+        }
     }
 
     post {

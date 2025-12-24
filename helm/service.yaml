@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: app
-  namespace: k8s-test1
+  name: k8s-test1
+  namespace: test
 spec:
   type: NodePort
   selector:
-    app: app
+    app: k8s-test1
   ports:
     - port: 80
       targetPort: 8080
