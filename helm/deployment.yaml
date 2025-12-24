@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8s-test1
+  namespace: test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: k8s-test1
+  template:
+    metadata:
+      labels:
+        app: k8s-test1
+    spec:
+      containers:
+        - name: k8s-test1
+          image: hyeonjin5012/app:latest
+          ports:
+            - containerPort: 8080
