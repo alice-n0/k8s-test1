@@ -60,6 +60,8 @@ pipeline {
         stage('deploy k8s'){
             steps{
                 sh '''
+                kubectl apply -f k8s/pv.yaml
+                kubectl apply -f k8s/pvc.yaml
                 kubectl apply -f k8s/deployment.yaml
                 kubectl apply -f k8s/service.yaml
                 kubectl rollout status deployment/k8s-test1 -n test
@@ -73,10 +75,10 @@ pipeline {
             sh 'docker logout || true'
         }
         success {
-            echo '✅ Jenkins CI pipeline 성공'
+            echo 'Jenkins pipeline 성공'
         }
         failure {
-            echo '❌ Jenkins CI pipeline 실패'
+            echo 'Jenkins pipeline 실패'
         }
     }
 }
