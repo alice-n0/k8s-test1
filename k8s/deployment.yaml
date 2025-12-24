@@ -15,6 +15,6 @@ spec:
     spec:
       containers:
         - name: k8s-test1
-          image: hyeonjin5012/app:latest
+          image: hyeonjin5012/app:initial
           ports:
             - containerPort: 8080

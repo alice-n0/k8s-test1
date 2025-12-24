@@ -33,7 +33,6 @@ pipeline {
             steps {
                 sh '''
                 docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
-                docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:latest
                 '''
             }
         }
@@ -51,7 +50,6 @@ pipeline {
                     echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
                     echo ${IMAGE_NAME}:${IMAGE_TAG}
                     docker push ${IMAGE_NAME}:${IMAGE_TAG}
-                    docker push ${IMAGE_NAME}:latest
                     '''
                 }
             }
@@ -62,7 +60,7 @@ pipeline {
                 sh '''
                 kubectl apply -f k8s/pv.yaml
                 kubectl apply -f k8s/pvc.yaml
-                kubectl apply -f k8s/deployment.yaml
+                kubectl apply -f k8s/deployment.yaml app=${IMAGE_NAME}:${IMAGE_TAG}
                 kubectl apply -f k8s/service.yaml
                 kubectl rollout status deployment/k8s-test1 -n test
                 '''
