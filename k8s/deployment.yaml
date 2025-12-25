@@ -18,3 +18,10 @@ spec:
           image: hyeonjin5012/app:initial
           ports:
             - containerPort: 8080
+          volumeMounts:
+            - name: app-storage
+              mountPath: /app/data
+      volumes:
+        - name: app-storage
+          persistentVolumeClaim:
+            claimName: app-pvc
