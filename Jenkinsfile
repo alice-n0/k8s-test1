@@ -60,7 +60,11 @@ pipeline {
                 sh '''
                 kubectl apply -f k8s/pv.yaml
                 kubectl apply -f k8s/pvc.yaml
-                kubectl set image deployment/k8s-test1 k8s-test1=${IMAGE_NAME}:${IMAGE_TAG} -n test
+                export IMAGE_NAME=hyeonjin5012/k8s-test1
+                export IMAGE_TAG=${BUILD_NUMBER}
+
+                envsubst < k8s/deployment.yaml | kubectl apply -f -
+
                 kubectl apply -f k8s/service.yaml
                 kubectl rollout status deployment/k8s-test1 -n test
                 '''

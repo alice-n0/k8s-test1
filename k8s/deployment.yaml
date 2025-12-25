@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: k8s-test1
-          image: hyeonjin5012/app:initial
+          image: ${IMAGE_NAME}:${IMAGE_TAG}
           ports:
             - containerPort: 8080
           volumeMounts:
