@@ -23,6 +23,6 @@ volumeMounts:
     mountPath: /app/data
 
 persistence: 
-  - name: app-pvc
+    name: app-pvc
     accessModes: ReadWriteOnce
     size: 1Gi
