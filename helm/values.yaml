@@ -1,0 +1,28 @@
+replicaCount: 1
+
+image:
+  repository: k8s-test1
+  pullPolicy: Always
+  tag: ""
+
+container: 
+  port: 8080
+
+service:
+  type: NodePort
+  port: 80
+  targetPort: 8080
+
+volumes:
+  - name: file-storage
+    persistentVolumeClaim:
+      claimName: app-pvc
+
+volumeMounts:
+  - name: file-storage
+    mountPath: /app/data
+
+persistence: 
+  - name: app-pvc
+    accessModes: ReadWriteOnce
+    size: 1Gi

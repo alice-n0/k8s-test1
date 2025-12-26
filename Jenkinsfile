@@ -8,8 +8,13 @@ pipeline {
     environment {
         JAVA_HOME = tool 'jdk-17'
         PATH = "${JAVA_HOME}/bin:${env.PATH}"
+
         IMAGE_NAME = "hyeonjin5012/k8s-test1"
         IMAGE_TAG  = "${BUILD_NUMBER}"
+        
+        NAMESPACE = "test"
+        RELEASE_NAME = "k8s-test1"
+        CHART_PATH = "./helm/k8s-test1"
     }
 
     stages {
@@ -55,32 +60,27 @@ pipeline {
             }
         }
         
-        stage('deploy k8s'){
-            steps{
-                sh '''
-                kubectl apply -f k8s/pv.yaml
-                kubectl apply -f k8s/pvc.yaml
-                export IMAGE_NAME=hyeonjin5012/k8s-test1
-                export IMAGE_TAG=${BUILD_NUMBER}
-
-                envsubst < k8s/deployment.yaml | kubectl apply -f -
-
-                kubectl apply -f k8s/service.yaml
-                kubectl rollout status deployment/k8s-test1 -n test
-                '''
+      stage('deploy helm') {
+            steps {
+                withCredentials([file(credentialsId: 'k8s_master_config', variable: 'KUBECONFIG')]) {
+                    sh """
+                        helm upgrade --install ${RELEASE_NAME} ${CHART_PATH} \
+                        --wait --timeout=10m
+                        --namespace ${NAMESPACE} \
+                        --set image.repository=${IMAGE_NAME} \
+                        --set image.tag=${IMAGE_TAG}
+                    """
+                }
             }
         }
     }
 
     post {
-        always {
-            sh 'docker logout || true'
-        }
         success {
-            echo 'Jenkins pipeline 성공'
+            echo '배포 성공'
         }
         failure {
-            echo 'Jenkins pipeline 실패'
+            echo '배포 실패'
         }
     }
 }
