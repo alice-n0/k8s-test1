@@ -66,13 +66,19 @@ pipeline {
       stage('deploy helm') {
             steps {
                 withCredentials([file(credentialsId: 'k8s_master_config', variable: 'KUBECONFIG')]) {
-                    sh """
+                    sh '''
+                        set +e
+
+                        kubectl delete secret -n test -l "owner=helm,name=k8s-test1" || true
+
+                        set -e
+
                         helm upgrade --install ${RELEASE_NAME} ${CHART_PATH} \
                         --wait --timeout=10m
                         --namespace ${NAMESPACE} \
                         --set image.repository=${IMAGE_NAME} \
                         --set image.tag=${IMAGE_TAG}
-                    """
+                    '''
                 }
             }
         }
