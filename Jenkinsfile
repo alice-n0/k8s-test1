@@ -16,6 +16,9 @@ pipeline {
         RELEASE_NAME = "k8s-test1"
         CHART_PATH = "./helm/k8s-test1"
     }
+    options {
+        disableConcurrentBuilds()
+    }
 
     stages {
 
