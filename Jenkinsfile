@@ -70,7 +70,6 @@ pipeline {
                         --namespace test \
                         --set image.repository=${IMAGE_NAME} \
                         --set image.tag=${IMAGE_TAG}
-                        --wait --timeout=10m
                     """
                 }
             }
