@@ -12,6 +12,7 @@ pipeline {
         IMAGE_NAME = "hyeonjin5012/k8s-test1"
         IMAGE_TAG  = "${BUILD_NUMBER}"
         
+        NAMESPACE = "test"
         RELEASE_NAME = "k8s-test1"
         CHART_PATH = "./helm/k8s-test1"
     }
@@ -67,9 +68,10 @@ pipeline {
                 withCredentials([file(credentialsId: 'k8s_master_config', variable: 'KUBECONFIG')]) {
                     sh """
                         helm upgrade --install ${RELEASE_NAME} ${CHART_PATH} \
-                        --namespace test \
+                        --namespace ${NAMESPACE} \
                         --set image.repository=${IMAGE_NAME} \
                         --set image.tag=${IMAGE_TAG}
+                        
                     """
                 }
             }
