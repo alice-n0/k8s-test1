@@ -66,35 +66,13 @@ pipeline {
       stage('deploy helm') {
             steps {
                 withCredentials([file(credentialsId: 'k8s_master_config', variable: 'KUBECONFIG')]) {
-                    sh '''
-                        set +e
-
-                        NAMESPACE=test
-                        RELEASE=k8s-test1
-
-                        echo "=== [1] Helm release secret 강제 삭제 ==="
-
-                        kubectl get secret -n $NAMESPACE -o name \
-                        | grep "sh.helm.release.v1.${RELEASE}" \
-                        | xargs -r kubectl delete -n $NAMESPACE
-
-                        echo "=== [2] helm uninstall 시도 ==="
-                        helm uninstall $RELEASE -n $NAMESPACE || true
-
-                        echo "=== [3] 리소스 정리 ==="
-                        kubectl delete all -n $NAMESPACE -l app.kubernetes.io/instance=$RELEASE --ignore-not-found
-                        kubectl delete pvc -n $NAMESPACE -l app.kubernetes.io/instance=$RELEASE --ignore-not-found
-                        kubectl delete configmap -n $NAMESPACE -l app.kubernetes.io/instance=$RELEASE --ignore-not-found
-                        kubectl delete secret -n $NAMESPACE -l app.kubernetes.io/instance=$RELEASE --ignore-not-found
-
-                        set -e
-
+                    sh """
                         helm upgrade --install ${RELEASE_NAME} ${CHART_PATH} \
                         --wait --timeout=10m
                         --namespace ${NAMESPACE} \
                         --set image.repository=${IMAGE_NAME} \
                         --set image.tag=${IMAGE_TAG}
-                    '''
+                    """
                 }
             }
         }
