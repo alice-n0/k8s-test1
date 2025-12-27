@@ -69,7 +69,11 @@ pipeline {
                     sh '''
                         set +e
 
-                        helm rollback k8s-test1 --namespace test
+                        # 남아있는 hook/job 정리
+                        kubectl delete job -n test -l app.kubernetes.io/instance=k8s-test1
+
+                        # 비정상 Pod 정리
+                        kubectl delete pod -n test -l app=k8s-test1 --force --grace-period=0
 
                         set -e
 
