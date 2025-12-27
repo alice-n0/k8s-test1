@@ -69,11 +69,19 @@ pipeline {
                     sh '''
                         set +e
 
-                        # 남아있는 hook/job 정리
-                        kubectl delete job -n test -l app.kubernetes.io/instance=k8s-test1
+                       echo "=== [1] Helm release 관련 Secret 전부 삭제 ==="
+                        kubectl get secret -n $NAMESPACE -o name \
+                        | grep "sh.helm.release.v1.${RELEASE}" \
+                        | xargs -r kubectl delete -n $NAMESPACE
 
-                        # 비정상 Pod 정리
-                        kubectl delete pod -n test -l app=k8s-test1 --force --grace-period=0
+                        echo "=== [2] helm uninstall 시도 (있으면 삭제) ==="
+                        helm uninstall $RELEASE -n $NAMESPACE || true
+
+                        echo "=== [3] 남아있는 리소스 강제 정리 ==="
+                        kubectl delete all -n $NAMESPACE -l app.kubernetes.io/instance=$RELEASE --ignore-not-found
+                        kubectl delete pvc -n $NAMESPACE -l app.kubernetes.io/instance=$RELEASE --ignore-not-found
+                        kubectl delete configmap -n $NAMESPACE -l app.kubernetes.io/instance=$RELEASE --ignore-not-found
+                        kubectl delete secret -n $NAMESPACE -l app.kubernetes.io/instance=$RELEASE --ignore-not-found
 
                         set -e
 
