@@ -67,8 +67,8 @@ pipeline {
                 withCredentials([file(credentialsId: 'k8s_master_config', variable: 'KUBECONFIG')]) {
                     sh """
                         helm upgrade --install ${RELEASE_NAME} ${CHART_PATH} \
-                        --wait --timeout=10m
                         --n test \
+                        --wait --timeout=10m
                         --set image.repository=${IMAGE_NAME} \
                         --set image.tag=${IMAGE_TAG}
                     """
