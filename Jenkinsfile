@@ -69,7 +69,7 @@ pipeline {
                     sh '''
                         set +e
 
-                        kubectl delete secret -n test -l "owner=helm,name=k8s-test1" || true
+                        helm rollback k8s-test1 --namespace test
 
                         set -e
 
